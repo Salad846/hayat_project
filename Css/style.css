@@ -2112,6 +2112,32 @@ ul.social_icon li a {
     text-transform: uppercase; 
 }
 
+.reisen-bg {
+	background-color: #f6f6f6f6;
+}
+
+.reisen-bg .reisenheading h3 { 
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 50px;
+    text-align:center;
+    padding: 40px 0px;
+    text-transform: uppercase; 
+}
+
+.tools-bg {
+	background-color: #f6f6f6f6;
+}
+
+.tools-bg .toolsheading h3 { 
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 50px;
+    text-align:center;
+    padding: 40px 0px;
+    text-transform: uppercase; 
+}
+
 #map {
     height: 100%;
     min-height: 480px;

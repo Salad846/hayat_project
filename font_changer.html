@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Changer</title>
+    <style>
+        @font-face {
+            font-family: '18 Khebrat Musamim Regular';
+            src: url('fonts/18 Khebrat Musamim Regular.ttf') format('truetype');
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #inputField {
+            width: 80%;
+            padding: 10px;
+            font-size: 18px;
+        }
+        #fontSelector {
+            margin-top: 20px;
+        }
+        #outputText {
+            font-size: 48px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Font Changer</h1>
+    <input type="text" id="inputField" placeholder="Enter your text here">
+    <div id="fontSelector">
+        <label for="fontSelect">Select Font:</label>
+        <select id="fontSelect">
+            <!-- Fonts will be dynamically loaded here -->
+            <option value="'18 Khebrat Musamim Regular', sans-serif">Khebrat Musamim Regular</option>
+        </select>
+        <button onclick="changeFont()">Apply Font</button>
+    </div>
+    <div id="outputText"></div>
+    <a id="downloadLink" style="display: none;">Download SVG</a>
+
+    <script>
+        // Function to dynamically load fonts from Google Fonts
+        function loadFonts() {
+            const fontSelect = document.getElementById('fontSelect');
+            fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyC4goi4iQONKJzy6hFE2fm6LIO5n4y2MdM')
+                .then(response => response.json())
+                .then(data => {
+                    data.items.forEach(font => {
+                        const option = document.createElement('option');
+                        option.value = `${font.family}, ${font.category}`;
+                        option.textContent = font.family;
+                        fontSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading fonts:', error));
+        }
+
+        // Call the function to load fonts when the page loads
+        loadFonts();
+
+        const inputField = document.getElementById('inputField');
+        const outputText = document.getElementById('outputText');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // Function to update the output text as you type
+        inputField.addEventListener('input', function() {
+            const inputText = inputField.value;
+            const fontSelect = document.getElementById('fontSelect');
+            const selectedFont = fontSelect.options[fontSelect.selectedIndex].value;
+
+            outputText.textContent = inputText;
+            outputText.style.fontFamily = selectedFont;
+        });
+
+        // Initial font change
+        function changeFont() {
+            const inputText = inputField.value;
+            const fontSelect = document.getElementById('fontSelect');
+            const selectedFont = fontSelect.options[fontSelect.selectedIndex].value;
+
+            outputText.textContent = inputText;
+            outputText.style.fontFamily = selectedFont;
+
+            // Create an SVG element with a foreignObject for HTML content
+            const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement.setAttribute("width", "400"); // Adjust the width of the SVG container
+            svgElement.setAttribute("height", "100"); // Adjust the height of the SVG container
+
+            // Create a foreignObject element
+            const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+            foreignObject.setAttribute("width", "100%");
+            foreignObject.setAttribute("height", "100%");
+            
+            // Create an HTML div element for the text
+            const divElement = document.createElement("div");
+            divElement.style.fontFamily = selectedFont;
+            divElement.style.fontSize = "24px";
+            divElement.textContent = inputText;
+
+            // Append the div to the foreignObject
+            foreignObject.appendChild(divElement);
+
+            // Append the foreignObject to the SVG
+            svgElement.appendChild(foreignObject);
+
+            // Serialize SVG as XML
+            const svgXml = new XMLSerializer().serializeToString(svgElement);
+
+            // Encode SVG as data URI
+            const svgData = 'data:image/svg+xml;base64,' + btoa(svgXml);
+
+            // Set the download link
+            downloadLink.href = svgData;
+            downloadLink.download = 'output.svg';
+            downloadLink.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
